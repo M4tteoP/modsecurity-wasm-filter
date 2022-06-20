@@ -180,62 +180,16 @@ void ExampleContext::onCreate() {
   LOG_WARN(std::string("onCreate " + std::to_string(id())));
 
   // modsecurity initializing
+  LOG_WARN(std::string("Initializing Modsecurity " + std::to_string(id())));
   ExampleRootContext* root = dynamic_cast<ExampleRootContext*>(this->root());
+  LOG_WARN(std::string("Creating modsecurity::Transaction "));
   modsec_transaction_.reset(new modsecurity::Transaction(root->modsec().get(), root->modsec_rules().get(), this));
+  LOG_WARN(std::string("modsecurity::Transaction created, onCreate done"));
 }
 
 FilterHeadersStatus ExampleContext::onRequestHeaders(uint32_t /* headers */, bool end_of_stream) {
   LOG_INFO("************************ onRequestHeaders ***************************");
-  if (status_.intervined || status_.request_processed) {
-    LOG_INFO("Processed");
     return getRequestHeadersStatus();
-  }
-
-  // modsecurity processConnection
-  std::string remote_addr;
-  int remote_port;
-  std::string local_addr;
-  int local_port;
-  getValue({"source", "address"}, &remote_addr);
-  getValue({"source", "port"}, &remote_port);
-  getValue({"destination", "address"}, &local_addr);
-  getValue({"destination", "port"}, &local_port);
-  LOG_INFO(std::string("source address: ") + remote_addr + std::string(", dest address: ") + local_addr);
-  modsec_transaction_->processConnection(split(remote_addr, ":")[0].c_str(), remote_port,
-                                         split(local_addr, ":")[0].c_str(), local_port);
-  if (intervention()) {
-    return FilterHeadersStatus::StopIteration;
-  }
-
-  // modsecurity processURI
-  std::string path = getRequestHeader(":path")->toString();
-  std::string method = getRequestHeader(":method")->toString();
-  std::string protocol;
-  getValue({"request", "protocol"}, &protocol);
-  modsec_transaction_->processURI(path.c_str(), method.c_str(), protocol.c_str());
-  if (intervention()) {
-    return FilterHeadersStatus::StopIteration;
-  }
-
-  // modsecurity processRequestHeaders
-  auto result = getRequestHeaderPairs();
-  auto pairs = result->pairs();
-  for (auto& p : pairs) {
-    modsec_transaction_->addRequestHeader(std::string(p.first), std::string(p.second));
-  }
-  modsec_transaction_->processRequestHeaders();
-  LOG_INFO(std::string("modsecurity processRequestHeaders done"));
-
-  if (end_of_stream) {
-    LOG_INFO(std::string("request processed"));
-    status_.request_processed = true;
-  }
-  if (intervention()) {
-    LOG_INFO(std::string("stop iteration"));
-    return FilterHeadersStatus::StopIteration;
-  }
-  LOG_INFO(std::string("getRequestHeadersStatus"));
-  return getRequestHeadersStatus();
 }
 
 FilterDataStatus ExampleContext::onRequestBody(size_t body_buffer_length,
