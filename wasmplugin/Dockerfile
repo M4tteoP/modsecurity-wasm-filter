@@ -43,10 +43,10 @@ RUN ./emsdk install 3.1.7 \
     && echo "source /root/emsdk/emsdk_env.sh" >> ~/.bashrc \  
     && cd ..
 
-RUN wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-16/wasi-sdk-16.0-linux.tar.gz \
-    && tar xvf wasi-sdk-16.0-linux.tar.gz -C /opt/ \
-    && mv /opt/wasi-sdk-16.0/ /opt/wasi-sdk \
-    && rm wasi-sdk-16.0-linux.tar.gz 
+RUN wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-12/wasi-sdk-12.0-linux.tar.gz \
+    && tar xvf wasi-sdk-12.0-linux.tar.gz -C /opt/ \
+    && mv /opt/wasi-sdk-12.0/ /opt/wasi-sdk \
+    && rm wasi-sdk-12.0-linux.tar.gz 
 
 ENV WASI_SDK_PATH="/opt/wasi-sdk" 
 
