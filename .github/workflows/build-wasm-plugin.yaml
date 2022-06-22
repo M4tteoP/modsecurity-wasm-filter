@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - remove-getentropy
   pull_request:
     paths:
       - "e2e"
