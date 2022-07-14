@@ -58,6 +58,7 @@ WORKDIR /root/libpcre
 RUN ../emsdk/emsdk install 3.1.15 \
     && ../emsdk/emsdk activate 3.1.15 \
     && echo "source /root/emsdk/emsdk_env.sh" >> ~/.bashrc \
+    && source "/root/emsdk/emsdk_env.sh" \
     && autoreconf -ivf \
     && ./build_for_crystal.sh wasm32-emscripten \
     && mkdir /usr/local/pcre \
