@@ -42,8 +42,8 @@ RUN git clone https://github.com/emscripten-core/emsdk.git -b 3.1.15 \
     && git clone https://github.com/istio/proxy.git -b 1.13.3
 
 WORKDIR /root/emsdk
-RUN ./emsdk install 2.0.22 \ 
-    && ./emsdk activate 2.0.22 \
+RUN ./emsdk install 3.1.7 \ 
+    && ./emsdk activate 3.1.7 \
     && echo "source /root/emsdk/emsdk_env.sh" >> ~/.bashrc \  
     && cd ..
 
@@ -80,6 +80,22 @@ RUN ./build.sh \
 WORKDIR /root/proxy-wasm-cpp-sdk
 RUN mkdir /build /sdk \
     && cp *.cc *.h *.js *.proto Makefile* *.a /sdk/ 
+
+WORKDIR /root
+RUN source "/root/emsdk/emsdk_env.sh" \
+    && git clone https://github.com/protocolbuffers/protobuf protobuf-wasm \
+    && cd protobuf-wasm \
+    && git checkout v3.9.1 \
+    && git clone https://github.com/kwonoj/protobuf-wasm wasm-patches \
+    && cd wasm-patches && git checkout 4bba8b2f38b5004f87489642b6ca4525ae72fe7f \
+    && cd .. \
+    && git apply wasm-patches/*.patch \
+    && ./autogen.sh \
+    && emconfigure ./configure --disable-shared CXXFLAGS="-O3 -flto" \
+    && emmake make \
+    && cd .. \
+    && cp protobuf-wasm/src/.libs/libprotobuf-lite.a /sdk/libprotobuf-lite.a \
+    && cp protobuf-wasm/src/.libs/libprotobuf.a /sdk/libprotobuf.a
 
 WORKDIR /root 
 RUN wget -O /usr/local/bin/bazel https://github.com/bazelbuild/bazelisk/releases/latest/download/bazelisk-linux-amd64 \
