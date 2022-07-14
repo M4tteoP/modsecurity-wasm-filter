@@ -55,7 +55,10 @@ RUN wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-12/w
 ENV WASI_SDK_PATH="/opt/wasi-sdk" 
 
 WORKDIR /root/libpcre
-RUN autoreconf -ivf \
+RUN ../emsdk/emsdk install 3.1.15 \
+    && ../emsdk/emsdk activate 3.1.15 \
+    && echo "source /root/emsdk/emsdk_env.sh" >> ~/.bashrc \
+    && autoreconf -ivf \
     && ./build_for_crystal.sh wasm32-emscripten \
     && mkdir /usr/local/pcre \
     && cp targets/wasm32-emscripten/*.a /usr/local/pcre \
@@ -91,7 +94,7 @@ RUN mv proxy istio-proxy \
     && cd ..
 
 WORKDIR /root
-ADD Makefile envoy-wasm-modsecurity-dynamic.cc utils.cc utils.h /build/ 
+ADD Makefile envoy-wasm-modsecurity.cc utils.cc utils.h /build/ 
 
 RUN cd ~/emsdk \
     && source ./emsdk_env.sh \
@@ -99,4 +102,4 @@ RUN cd ~/emsdk \
     && make 
 
 FROM scratch
-COPY --from=0 /build/envoy-wasm-modsecurity-dynamic.wasm /plugin.wasm
+COPY --from=0 /build/envoy-wasm-modsecurity.wasm /plugin.wasm

@@ -1,4 +1,4 @@
-all: envoy-wasm-modsecurity-dynamic.wasm
+all: envoy-wasm-modsecurity.wasm
 
 PROXY_WASM_CPP_SDK=/sdk
 CPP_API:=${PROXY_WASM_CPP_SDK}
