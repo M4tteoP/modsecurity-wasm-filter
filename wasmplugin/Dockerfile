@@ -42,8 +42,8 @@ RUN git clone https://github.com/emscripten-core/emsdk.git -b 3.1.15 \
     && git clone https://github.com/istio/proxy.git -b 1.13.3
 
 WORKDIR /root/emsdk
-RUN ./emsdk install 2.0.7 \ 
-    && ./emsdk activate 2.0.7 \
+RUN ./emsdk install 3.1.15 \ 
+    && ./emsdk activate 3.1.15 \
     && echo "source /root/emsdk/emsdk_env.sh" >> ~/.bashrc \  
     && cd ..
 
@@ -56,9 +56,9 @@ ENV WASI_SDK_PATH="/opt/wasi-sdk"
 
 WORKDIR /root/libpcre
 RUN autoreconf -ivf \
-    && ./build_for_crystal.sh wasm32-wasi \
+    && ./build_for_crystal.sh wasm32-emscripten \
     && mkdir /usr/local/pcre \
-    && cp targets/wasm32-wasi/*.a /usr/local/pcre \
+    && cp targets/wasm32-emscripten/*.a /usr/local/pcre \
     && cd .. 
 
 WORKDIR /root/ModSecurity
