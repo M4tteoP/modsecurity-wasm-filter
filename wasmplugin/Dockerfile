@@ -34,7 +34,7 @@ ARG MODSEC_SHA=a3454df9b09a8de16d41be10cdea4fc46ef08e91
 
 WORKDIR /root/
 RUN git clone https://github.com/emscripten-core/emsdk.git -b 3.1.15 \ 
-    && git clone https://github.com/maxfierke/libpcre.git -b mf-wasm32-wasi-cross-compile \
+    && git clone https://github.com/M4tteoP/libpcre.git -b wasm-emscripten \
     && git clone https://github.com/SpiderLabs/ModSecurity.git \
     && git -C ModSecurity checkout $MODSEC_SHA \
     && git clone https://github.com/abseil/abseil-cpp -b 20211102.0 \
@@ -47,19 +47,16 @@ RUN ./emsdk install 3.1.7 \
     && echo "source /root/emsdk/emsdk_env.sh" >> ~/.bashrc \  
     && cd ..
 
-RUN wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-12/wasi-sdk-12.0-linux.tar.gz \
-    && tar xvf wasi-sdk-12.0-linux.tar.gz -C /opt/ \
-    && mv /opt/wasi-sdk-12.0/ /opt/wasi-sdk \
-    && rm wasi-sdk-12.0-linux.tar.gz 
+#RUN wget https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-12/wasi-sdk-12.0-linux.tar.gz \
+#    && tar xvf wasi-sdk-12.0-linux.tar.gz -C /opt/ \
+#    && mv /opt/wasi-sdk-12.0/ /opt/wasi-sdk \
+#    && rm wasi-sdk-12.0-linux.tar.gz 
 
-ENV WASI_SDK_PATH="/opt/wasi-sdk" 
+# ENV WASI_SDK_PATH="/opt/wasi-sdk" 
 
 WORKDIR /root/libpcre
-RUN ../emsdk/emsdk install 3.1.15 \
-    && ../emsdk/emsdk activate 3.1.15 \
-    && echo "source /root/emsdk/emsdk_env.sh" >> ~/.bashrc \
+RUN autoreconf -ivf \
     && source "/root/emsdk/emsdk_env.sh" \
-    && autoreconf -ivf \
     && ./build_for_crystal.sh wasm32-emscripten \
     && mkdir /usr/local/pcre \
     && cp targets/wasm32-emscripten/*.a /usr/local/pcre \
