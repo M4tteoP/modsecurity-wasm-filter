@@ -87,7 +87,8 @@ RUN source "/root/emsdk/emsdk_env.sh" \
     && cd protobuf-wasm \
     && git checkout v3.9.1 \
     && git clone https://github.com/kwonoj/protobuf-wasm wasm-patches \
-    && cd wasm-patches && git checkout 4bba8b2f38b5004f87489642b6ca4525ae72fe7f \
+    && cd wasm-patches \
+    && git checkout 4bba8b2f38b5004f87489642b6ca4525ae72fe7f \
     && cd .. \
     && git apply wasm-patches/*.patch \
     && ./autogen.sh \
@@ -108,7 +109,7 @@ RUN mv proxy istio-proxy \
     && cd ..
 
 WORKDIR /root
-ADD Makefile envoy-wasm-modsecurity.cc utils.cc utils.h /build/ 
+ADD Makefile envoy-wasm-modsecurity-dynamic.cc utils.cc utils.h /build/ 
 
 RUN cd ~/emsdk \
     && source ./emsdk_env.sh \
@@ -116,4 +117,4 @@ RUN cd ~/emsdk \
     && make 
 
 FROM scratch
-COPY --from=0 /build/envoy-wasm-modsecurity.wasm /plugin.wasm
+COPY --from=0 /build/envoy-wasm-modsecurity-dynamic.wasm /plugin.wasm
