@@ -33,7 +33,7 @@ RUN git clone -b v3.9.1 https://github.com/protocolbuffers/protobuf \
 ARG MODSEC_SHA=a3454df9b09a8de16d41be10cdea4fc46ef08e91
 
 WORKDIR /root/
-RUN git clone https://github.com/emscripten-core/emsdk.git -b 3.1.15 \ 
+RUN git clone https://github.com/emscripten-core/emsdk.git -b 3.1.16 \ 
     && git clone https://github.com/M4tteoP/libpcre.git -b wasm-emscripten \
     && git clone https://github.com/SpiderLabs/ModSecurity.git \
     && git -C ModSecurity checkout $MODSEC_SHA \
@@ -42,8 +42,8 @@ RUN git clone https://github.com/emscripten-core/emsdk.git -b 3.1.15 \
     && git clone https://github.com/istio/proxy.git -b 1.13.3
 
 WORKDIR /root/emsdk
-RUN ./emsdk install 3.1.7 \ 
-    && ./emsdk activate 3.1.7 \
+RUN ./emsdk install 3.1.16 \ 
+    && ./emsdk activate 3.1.16 \
     && echo "source /root/emsdk/emsdk_env.sh" >> ~/.bashrc \  
     && cd ..
 
