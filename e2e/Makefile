@@ -11,7 +11,7 @@ build-wasm-plugin-static:
 
 extract-wasm-plugin-static:
 	@docker rm -f $(EXTRACT_CONTAINER_NAME) || true
-	@docker create --rm --name $(EXTRACT_CONTAINER_NAME) $(IMAGE_NAME):$(IMAGE_VERSION) /plugin.wasm
+	@docker create --no-cache --rm --name $(EXTRACT_CONTAINER_NAME) $(IMAGE_NAME):$(IMAGE_VERSION) /plugin.wasm
 	@mkdir -p ./build
 	@docker cp $(EXTRACT_CONTAINER_NAME):/plugin.wasm ./build/modsecurity-filter.wasm
 	@docker rm -f $(EXTRACT_CONTAINER_NAME)
