@@ -57,7 +57,7 @@ RUN ./emsdk install 3.1.7 \
 WORKDIR /root/libpcre
 RUN autoreconf -ivf \
     && source "/root/emsdk/emsdk_env.sh" \
-    && ./build_for_crystal.sh wasm32-emscripten \
+    && ./build_for_wasm.sh wasm32-emscripten \
     && mkdir /usr/local/pcre \
     && cp targets/wasm32-emscripten/*.a /usr/local/pcre \
     && cd .. 
